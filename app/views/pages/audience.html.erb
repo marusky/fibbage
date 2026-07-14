@@ -4,7 +4,7 @@
   <div class="mx-auto w-full max-w-xl">
 
     <% if @game.on? %>
-      <% case @game.current_question.state.to_sym %>
+      <% case @question.state.to_sym %>
       <% when :initial %>
 
         <div class="relative -rotate-1 rounded-2xl border-4 border-black bg-yellow-300 p-8 shadow-[8px_8px_0_0_#000]">
@@ -12,7 +12,7 @@
             Question
           </span>
           <p class="text-2xl font-black leading-snug text-black">
-            <%= @game.current_question.question %>
+            <%= @question.question %>
           </p>
         </div>
 
@@ -23,45 +23,63 @@
             Question
           </span>
           <p class="text-2xl font-black leading-snug text-black">
-            <%= @game.current_question.question %>
+            <%= @question.question %>
           </p>
         </div>
 
-        <% unless @answer %>
-          <div class="mt-8 rotate-1 rounded-2xl border-4 border-black bg-cyan-300 p-6 shadow-[8px_8px_0_0_#000]">
-            <%= form_with model: Answer.new do |form| %>
-              <%= form.text_field :text,
-                  placeholder: "Write your answer…",
-                  class: "w-full rounded-xl border-4 border-black bg-white px-4 py-3 text-lg font-bold text-black placeholder:text-gray-400 shadow-[4px_4px_0_0_#000] focus:outline-none focus:ring-4 focus:ring-pink-500 focus:ring-offset-2 focus:ring-offset-cyan-300" %>
+        <% unless @audience_choice %>
+          <div class="mt-8 rounded-2xl border-4 border-black bg-white p-6 shadow-[8px_8px_0_0_#000]">
+            <%= form_with model: AudienceChoice.new, url: audience_choices_path do |form| %>
+              <div class="space-y-4">
+                <% @question.audience_lies.each do |lie| %>
+                  <label class="block cursor-pointer">
+                    <%= form.radio_button :lie_id,
+                                          lie.id,
+                                          class: "peer sr-only" %>
+
+                    <div class="rounded-xl border-4 border-black bg-orange-100 p-4 text-lg font-bold uppercase text-black shadow-[4px_4px_0_0_#000] transition-all
+                                hover:-translate-y-0.5 hover:bg-orange-200
+                                peer-checked:bg-pink-500
+                                peer-checked:text-white
+                                peer-checked:shadow-[4px_4px_0_0_#000]
+                                peer-checked:-rotate-1
+                                peer-focus-visible:ring-4
+                                peer-focus-visible:ring-cyan-400
+                                peer-focus-visible:ring-offset-2">
+                      <%= lie.text %>
+                    </div>
+                  </label>
+                <% end %>
+              </div>
 
               <%= form.submit "Submit",
-                  class: "mt-5 w-full cursor-pointer rounded-xl border-4 border-black bg-lime-400 px-6 py-3 text-xl font-black uppercase tracking-wider text-black shadow-[6px_6px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[8px_8px_0_0_#000] active:translate-x-1 active:translate-y-1 active:shadow-none" %>
+                  class: "mt-6 w-full cursor-pointer rounded-xl border-4 border-black bg-lime-400 px-6 py-3 text-xl font-black uppercase tracking-wider text-black shadow-[6px_6px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[8px_8px_0_0_#000] active:translate-x-1 active:translate-y-1 active:shadow-none" %>
             <% end %>
           </div>
         <% else %>
           <div class="mt-8 rotate-1 rounded-2xl border-4 border-black bg-lime-400 p-6 text-center shadow-[8px_8px_0_0_#000]">
             <p class="text-xl font-black uppercase tracking-wide text-black">
-              ✅ Your answer has been recorded.
+              ✅ Your pick has been recorded.
             </p>
           </div>
         <% end %>
 
-      <% when :voting, :evaluated %>
+      <% when :voting %>
 
         <div class="relative -rotate-1 rounded-2xl border-4 border-black bg-yellow-300 p-8 shadow-[8px_8px_0_0_#000]">
           <span class="absolute -top-5 left-6 inline-block rotate-2 rounded-lg border-4 border-black bg-pink-500 px-4 py-1 text-sm font-black uppercase tracking-widest text-white shadow-[4px_4px_0_0_#000]">
             Voting
           </span>
           <p class="text-2xl font-black leading-snug text-black">
-            <%= @game.current_question.question %>
+            <%= @question.question %>
           </p>
         </div>
 
-        <% unless @vote %>
+        <% unless @audience_vote %>
           <div class="mt-8 rounded-2xl border-4 border-black bg-white p-6 shadow-[8px_8px_0_0_#000]">
-            <%= form_with model: Vote.new do |form| %>
+            <%= form_with model: AudienceVote.new, url: audience_votes_path do |form| %>
               <div class="space-y-4">
-                <% @other_answers.each do |answer| %>
+                <% @voting_answers.each do |answer| %>
                   <label class="block cursor-pointer">
                     <%= form.radio_button :answer_id,
                                           answer.id,
@@ -93,6 +111,17 @@
             </p>
           </div>
         <% end %>
+
+      <% when :evaluated %>
+
+        <div class="rounded-2xl border-4 border-black bg-yellow-300 p-10 text-center shadow-[8px_8px_0_0_#000]">
+          <div class="mx-auto mb-4 inline-block -rotate-3 rounded-xl border-4 border-black bg-pink-500 px-5 py-2 text-3xl shadow-[4px_4px_0_0_#000]">
+            👀
+          </div>
+          <p class="text-2xl font-black uppercase leading-snug tracking-wide text-black">
+            Look up at the big screen!
+          </p>
+        </div>
 
       <% end %>
     <% else %>

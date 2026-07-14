@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_14_195045) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_14_200400) do
   create_table "answers", force: :cascade do |t|
     t.integer "player_id"
     t.integer "question_id", null: false
@@ -19,8 +19,33 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_14_195045) do
     t.boolean "truth", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "audience_lie", default: false, null: false
     t.index ["player_id"], name: "index_answers_on_player_id"
     t.index ["question_id"], name: "index_answers_on_question_id"
+  end
+
+  create_table "audience_choices", force: :cascade do |t|
+    t.integer "audience_player_id", null: false
+    t.integer "lie_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["audience_player_id"], name: "index_audience_choices_on_audience_player_id"
+    t.index ["lie_id"], name: "index_audience_choices_on_lie_id"
+  end
+
+  create_table "audience_players", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "audience_votes", force: :cascade do |t|
+    t.integer "audience_player_id", null: false
+    t.integer "answer_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["answer_id"], name: "index_audience_votes_on_answer_id"
+    t.index ["audience_player_id"], name: "index_audience_votes_on_audience_player_id"
   end
 
   create_table "games", force: :cascade do |t|
@@ -70,6 +95,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_14_195045) do
   end
 
   add_foreign_key "answers", "questions"
+  add_foreign_key "audience_choices", "audience_players"
+  add_foreign_key "audience_choices", "lies", column: "lie_id"
+  add_foreign_key "audience_votes", "answers"
+  add_foreign_key "audience_votes", "audience_players"
   add_foreign_key "votes", "answers"
   add_foreign_key "votes", "players"
 end

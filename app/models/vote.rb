@@ -9,7 +9,7 @@ class Vote < ApplicationRecord
       self.points =
         if answer.truth?
           answer.question.points
-        elsif answer.our_lie?
+        elsif answer.our_lie? || answer.audience_lie?
           0
         else
           answer.question.points / 2

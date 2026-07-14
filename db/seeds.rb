@@ -171,9 +171,13 @@ data = [
   }
 ]
 
+AudienceVote.delete_all
+AudienceChoice.delete_all
 Vote.delete_all
 Answer.delete_all
 Question.delete_all
+Player.delete_all
+AudiencePlayer.delete_all
 Game.delete_all
 
 game = Game.create(code: 'asdf')

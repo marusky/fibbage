@@ -1,5 +1,6 @@
 class Question < ApplicationRecord
   ANSWER_TIME = 50.seconds
+  AUDIENCE_POINTS_POOL = 500
 
   belongs_to :game, touch: true
   has_many :audience_lies, -> { audience }, class_name: "Lie"
@@ -22,6 +23,7 @@ class Question < ApplicationRecord
 
     update!(state: :closed)
     add_our_lies
+    add_audience_lie
   end
 
   def all_answered?
@@ -50,6 +52,14 @@ class Question < ApplicationRecord
       end
     end
 
+    def add_audience_lie
+      counts = AudienceChoice.where(lie_id: audience_lies.select(:id)).group(:lie_id).count
+      return if counts.empty?
+
+      winning_lie_id = counts.max_by { |_lie_id, count| count }.first
+      answers.create!(text: audience_lies.find(winning_lie_id).text, audience_lie: true)
+    end
+
     def award_points
       answers.includes(:votes).each do |answer|
         next if answer.votes.empty?
@@ -59,6 +69,20 @@ class Question < ApplicationRecord
         elsif answer.player
           answer.player.increment!(:points, answer.votes.sum(&:points))
         end
+      end
+
+      award_audience_points
+    end
+
+    def award_audience_points
+      loaded_answers = answers.includes(:audience_votes).to_a
+      total = loaded_answers.sum { |answer| answer.audience_votes.size }
+      return if total.zero?
+
+      loaded_answers.each do |answer|
+        next if answer.audience_votes.empty? || answer.player.nil?
+
+        answer.player.increment!(:points, (AUDIENCE_POINTS_POOL * answer.audience_votes.size / total.to_f).round)
       end
     end
 end

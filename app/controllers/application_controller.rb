@@ -7,6 +7,10 @@ class ApplicationController < ActionController::Base
     @current_player ||= Player.find_by(id: cookies.encrypted[:pid])
   end
 
+  def current_audience_player
+    @current_audience_player ||= AudiencePlayer.find_by(id: cookies.encrypted[:apid])
+  end
+
   private
     def set_game
       @game = Game.first

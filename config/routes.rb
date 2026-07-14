@@ -12,10 +12,11 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   get "tv", to: "pages#tv"
   get "admin", to: "pages#admin", constraints: ->(request) { request.params[:code].present? && request.params[:code] == Game.first&.code }
-  resource :game do
+  resource :game, only: :show do
     member do
       patch "start"
       patch "next_question"
+      patch "reset"
     end
   end
 
@@ -32,7 +33,11 @@ Rails.application.routes.draw do
 
   resources :players, only: [ :new, :create ]
 
-  get "game", to: "pages#game"
+  resource :audience_player, only: [ :new, :create ]
+  resources :audience_choices, only: :create
+  resources :audience_votes, only: :create
 
-  root "pages#game"
+  get "audience", to: "pages#audience"
+
+  root "pages#audience"
 end

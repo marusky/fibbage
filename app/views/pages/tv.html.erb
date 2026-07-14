@@ -84,6 +84,15 @@
                           <p class="text-lg font-black">+<%= detail[:points] %> pts</p>
                         <% end %>
                       <% end %>
+
+                      <% if detail[:audience_count] > 0 %>
+                        <p class="text-sm font-bold">
+                          👥 Audience: <%= detail[:audience_percent] %>%
+                        </p>
+                        <% if detail[:audience_points] > 0 %>
+                          <p class="text-lg font-black">+<%= detail[:audience_points] %> pts (audience)</p>
+                        <% end %>
+                      <% end %>
                     </div>
                   <% end %>
                 </div>
