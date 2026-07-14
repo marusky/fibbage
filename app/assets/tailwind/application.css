@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+.reveal-card {
+  background-color: #ffffff;
+  opacity: 0;
+  transform: translateY(24px) scale(0.92);
+  transition: opacity 0.4s ease-out, transform 0.4s ease-out, box-shadow 0.3s ease-out,
+    background-color 0.3s ease-out, color 0.3s ease-out;
+}
+
+.reveal-card.is-in {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.reveal-card.is-muted {
+  opacity: 0.35;
+  filter: grayscale(1);
+}
+
+.reveal-card.is-active {
+  transform: translateY(-8px) scale(1.08) rotate(-1deg);
+  box-shadow: 12px 12px 0 0 #000;
+  z-index: 10;
+}
+
+.reveal-card.is-revealed:not(.is-truth) {
+  background-color: #ec4899;
+  color: #ffffff;
+}
+
+.reveal-card.is-revealed.is-truth {
+  background-color: #a3e635;
+}
+
+.reveal-detail {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease-out, opacity 0.3s ease-out 0.1s;
+}
+
+.reveal-card.is-revealed .reveal-detail {
+  max-height: 16rem;
+  opacity: 1;
+}
+
+.board-panel {
+  transition: opacity 0.4s ease-out;
+}
+
+.board-panel.is-fading-out {
+  opacity: 0;
+}
+
+.leaderboard-panel {
+  opacity: 0;
+  transform: translateY(32px) scale(0.95);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.leaderboard-panel.is-in {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}

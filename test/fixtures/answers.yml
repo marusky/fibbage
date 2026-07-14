@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  player: one
+  question: one
+  text: MyString
+  our_lie: false
+
+two:
+  player: two
+  question: two
+  text: MyString
+  our_lie: false

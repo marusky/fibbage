@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  state: MyString
+  question: MyText
+  answerable_until: 2026-07-11 15:27:13
+  our_lies: MyText
+  audience_lies: MyText
+  order: 1
+  points: 1
+
+two:
+  state: MyString
+  question: MyText
+  answerable_until: 2026-07-11 15:27:13
+  our_lies: MyText
+  audience_lies: MyText
+  order: 1
+  points: 1

@@ -10,5 +10,29 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
-  # root "posts#index"
+  get "tv", to: "pages#tv"
+  get "admin", to: "pages#admin", constraints: ->(request) { request.params[:code].present? && request.params[:code] == Game.first&.code }
+  resource :game do
+    member do
+      patch "start"
+      patch "next_question"
+    end
+  end
+
+  resource :question, only: [] do
+    member do
+      patch "open"
+      patch "open_voting"
+      patch "evaluate"
+    end
+  end
+
+  resources :answers, only: :create
+  resources :votes, only: :create
+
+  resources :players, only: [ :new, :create ]
+
+  get "game", to: "pages#game"
+
+  root "pages#game"
 end

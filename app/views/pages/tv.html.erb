@@ -1,0 +1,114 @@
+<%= turbo_stream_from @game %>
+
+<div class="min-h-screen overflow-y-auto bg-violet-600 bg-[radial-gradient(circle,rgba(255,255,255,0.15)_2px,transparent_2px)] [background-size:28px_28px] px-10 py-12 font-sans">
+
+  <div class="fixed left-6 top-6 rotate-2 rounded-xl border-4 border-black bg-black px-4 py-2 text-lg font-black uppercase tracking-widest text-yellow-300 shadow-[4px_4px_0_0_#000]">
+    Fibbage
+  </div>
+
+  <div class="flex min-h-[80vh] flex-col items-center justify-center text-center">
+
+    <% unless @game.on? %>
+
+      <div class="max-w-4xl rounded-3xl border-8 border-black bg-yellow-300 p-16 text-center shadow-[16px_16px_0_0_#000]">
+        <div class="mx-auto mb-6 inline-block -rotate-3 rounded-2xl border-4 border-black bg-pink-500 px-8 py-4 text-6xl shadow-[6px_6px_0_0_#000]">
+          🎉
+        </div>
+        <p class="text-4xl font-black uppercase leading-snug tracking-wide text-black">
+          Everything is ready,<br>the game will start soon.
+        </p>
+      </div>
+
+    <% else %>
+      <% case @question.state.to_sym %>
+      <% when :initial, :open, :closed, :voting %>
+
+        <% label = { initial: "Question", open: "Question", closed: "Time's up", voting: "Voting" }.fetch(@question.state.to_sym) %>
+
+        <div class="relative w-full max-w-5xl -rotate-1 rounded-3xl border-8 border-black bg-yellow-300 p-16 shadow-[16px_16px_0_0_#000]">
+          <span class="absolute -top-8 left-10 inline-block rotate-2 rounded-xl border-4 border-black bg-pink-500 px-6 py-2 text-2xl font-black uppercase tracking-widest text-white shadow-[6px_6px_0_0_#000]">
+            <%= label %>
+          </span>
+          <p class="text-5xl font-black leading-snug text-black">
+            <%= @question.question %>
+          </p>
+        </div>
+
+        <% if @question.state_open? %>
+          <div class="mt-12 w-full max-w-5xl rounded-2xl border-8 border-black bg-white p-3 shadow-[10px_10px_0_0_#000]"
+               data-controller="timer"
+               data-timer-ends-at-value="<%= ((@question.answerable_until || Time.current).to_f * 1000).to_i %>">
+            <div data-timer-target="bar"
+                 class="h-8 w-full rounded-lg border-4 border-black bg-lime-400 transition-[width] ease-linear"></div>
+          </div>
+        <% end %>
+
+      <% when :evaluated %>
+
+        <div class="w-full max-w-6xl"
+             data-controller="reveal"
+             data-reveal-order-value="<%= @reveal[:order].to_json %>">
+
+          <div data-reveal-target="board" class="board-panel">
+            <span class="inline-block -rotate-2 rounded-xl border-4 border-black bg-pink-500 px-6 py-2 text-2xl font-black uppercase tracking-widest text-white shadow-[6px_6px_0_0_#000]">
+              Evaluation
+            </span>
+            <p class="mx-auto mt-6 max-w-4xl text-3xl font-black text-white drop-shadow-[3px_3px_0_#000]">
+              <%= @question.question %>
+            </p>
+
+            <div class="mt-10 grid grid-cols-2 gap-6 md:grid-cols-3 xl:grid-cols-4">
+              <% @reveal[:answers].each do |answer| %>
+                <% detail = @reveal[:details][answer.id] %>
+
+                <div data-reveal-target="card"
+                     data-answer-id="<%= answer.id %>"
+                     class="reveal-card <%= "is-truth" if answer.truth? %> rounded-2xl border-4 border-black p-6 text-left shadow-[8px_8px_0_0_#000]">
+                  <p class="text-xl font-black uppercase"><%= answer.text %></p>
+
+                  <% if detail %>
+                    <div class="reveal-detail mt-4 space-y-2 border-t-4 border-black pt-4">
+                      <% if answer.truth? %>
+                        <p class="text-sm font-black uppercase tracking-wide">✅ The truth!</p>
+                      <% else %>
+                        <p class="text-sm font-black uppercase tracking-wide">✍️ <%= detail[:author] %></p>
+                      <% end %>
+
+                      <% if detail[:voters].any? %>
+                        <p class="text-sm font-bold">
+                          <%= answer.truth? ? "Guessed by" : "Fooled" %>: <%= detail[:voters].join(", ") %>
+                        </p>
+                        <% if answer.truth? %>
+                          <p class="text-lg font-black">+<%= @question.points %> pts each</p>
+                        <% else %>
+                          <p class="text-lg font-black">+<%= detail[:points] %> pts</p>
+                        <% end %>
+                      <% end %>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+
+          <div data-reveal-target="leaderboard" class="leaderboard-panel mx-auto mt-14 w-full max-w-2xl -rotate-1 rounded-3xl border-8 border-black bg-yellow-300 p-10 text-left shadow-[16px_16px_0_0_#000]">
+            <span class="mb-6 inline-block rotate-2 rounded-xl border-4 border-black bg-pink-500 px-6 py-2 text-xl font-black uppercase tracking-widest text-white shadow-[6px_6px_0_0_#000]">
+              Leaderboard
+            </span>
+
+            <ol class="mt-6 space-y-3">
+              <% @leaderboard.each.with_index(1) do |player, rank| %>
+                <li class="flex items-center justify-between rounded-xl border-4 border-black <%= rank == 1 ? "bg-lime-400" : "bg-white" %> px-5 py-3 shadow-[4px_4px_0_0_#000]">
+                  <span class="text-xl font-black text-black">#<%= rank %> <%= player.name %></span>
+                  <span class="text-xl font-black text-black"><%= player.points %> pts</span>
+                </li>
+              <% end %>
+            </ol>
+          </div>
+        </div>
+
+      <% end %>
+    <% end %>
+
+  </div>
+</div>
