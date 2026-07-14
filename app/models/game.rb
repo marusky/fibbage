@@ -9,6 +9,10 @@ class Game < ApplicationRecord
     questions.find_by(order: question_number)
   end
 
+  def last_question?
+    !questions.where(order: question_number + 1).exists?
+  end
+
   def next_question!
     next_question_number = question_number + 1
 

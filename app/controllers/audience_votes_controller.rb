@@ -1,6 +1,10 @@
 class AudienceVotesController < ApplicationController
   def create
-    current_audience_player.audience_votes.create!(audience_vote_params)
+    @audience_vote = current_audience_player.audience_votes.build(audience_vote_params)
+
+    return redirect_to audience_url unless @audience_vote.valid?
+
+    @audience_vote.save!
 
     redirect_to audience_url
   end

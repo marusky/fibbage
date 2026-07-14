@@ -180,7 +180,7 @@ Player.delete_all
 AudiencePlayer.delete_all
 Game.delete_all
 
-game = Game.create(code: 'asdf')
+game = Game.create(code: 'ferino')
 
 data.each do |entry|
   question = Question.create!(

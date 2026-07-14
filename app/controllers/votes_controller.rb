@@ -2,6 +2,8 @@ class VotesController < ApplicationController
   def create
     @vote = Vote.new(vote_params)
 
+    return redirect_to game_url unless @vote.valid?
+
     @vote.save!
     redirect_to game_url
   end

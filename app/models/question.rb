@@ -46,9 +46,11 @@ class Question < ApplicationRecord
   private
     def add_our_lies
       players_with_answer_ids = answers.pluck(:player_id)
+      our_lie_pool = our_lies.to_a
+      return if our_lie_pool.empty?
 
       Player.where.not(id: players_with_answer_ids).each.with_index do |player, index|
-        answers.create!(text: our_lies[index].text, our_lie: true, player: player)
+        answers.create!(text: our_lie_pool[index % our_lie_pool.size].text, our_lie: true, player: player)
       end
     end
 

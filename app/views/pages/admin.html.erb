@@ -18,6 +18,11 @@
         <span class="rounded-lg border-4 border-black bg-cyan-300 px-3 py-1 text-sm font-black uppercase tracking-wide text-black shadow-[3px_3px_0_0_#000]">
           State: <%= @game.current_question.state %>
         </span>
+        <% if @game.current_question.state_evaluated? && @game.last_question? %>
+          <span class="rounded-lg border-4 border-black bg-lime-400 px-3 py-1 text-sm font-black uppercase tracking-wide text-black shadow-[3px_3px_0_0_#000]">
+            Game finished!
+          </span>
+        <% end %>
       </div>
 
       <p class="mt-5 text-2xl font-black leading-snug text-black">
@@ -26,11 +31,15 @@
     </div>
 
     <% active_step =
-         case @game.current_question.state.to_sym
-         when :initial then :open
-         when :open, :closed then :open_voting
-         when :voting then :evaluate
-         when :evaluated then :next_question
+         if @game.current_question.state_evaluated? && @game.last_question?
+           nil
+         else
+           case @game.current_question.state.to_sym
+           when :initial then :open
+           when :open, :closed then :open_voting
+           when :voting then :evaluate
+           when :evaluated then :next_question
+           end
          end %>
 
     <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
