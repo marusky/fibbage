@@ -3,7 +3,7 @@
 
 # This Dockerfile is designed for production, not development. Use with Kamal or build'n'run by hand:
 # docker build -t fibbage .
-# docker run -d -p 80:80 -e RAILS_MASTER_KEY=<value from config/master.key> --name fibbage fibbage
+# docker run -d -p 80:80 -e RAILS_MASTER_KEY=bcef01efcf3e66851f9345ee707dfae5 --name fibbage fibbage
 
 # For a containerized dev environment, see Dev Containers: https://guides.rubyonrails.org/getting_started_with_devcontainer.html
 

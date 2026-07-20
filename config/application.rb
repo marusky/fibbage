@@ -23,5 +23,7 @@ module Fibbage
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+    config.hosts << "fibbage.kecy"
+    config.hosts << "192.168.0.50"
   end
 end
