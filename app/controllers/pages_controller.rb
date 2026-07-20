@@ -22,7 +22,7 @@ class PagesController < ApplicationController
 
   private
     def build_reveal(question)
-      answers = question.answers.includes(:player, votes: :player, audience_votes: :audience_player).order(:id).to_a
+      answers = question.answers.includes(:player, votes: :player, audience_votes: :audience_player).order(:id).to_a.shuffle
       truth = answers.find(&:truth?)
       voted_lies = answers.reject(&:truth?).select { |answer| answer.votes.any? || answer.audience_votes.any? }
                            .sort_by { |answer| answer.votes.size + answer.audience_votes.size }
